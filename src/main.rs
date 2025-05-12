@@ -23,6 +23,7 @@ struct MyApp {
     drawing: Vec<Pos2>,
     is_drawing: bool,
     buffer: [[u8; BUFFER_SIZE]; BUFFER_SIZE],
+    selected_shape: String,
 }
 
 impl Default for MyApp {
@@ -31,6 +32,7 @@ impl Default for MyApp {
             drawing: Vec::new(),
             is_drawing: false,
             buffer: [[0; BUFFER_SIZE]; BUFFER_SIZE],
+            selected_shape: "None selected".to_string(),
         }
     }
 }
@@ -78,6 +80,18 @@ impl eframe::App for MyApp {
             }
 
             SidePanel::right("buffer_panel").show(ctx, |ui| {
+                ui.heading("Select Shape Type");
+                let shapes = ["Circle", "Square", "Triangle"];
+
+                for shape in &shapes {
+                    if ui.button(*shape).clicked() {
+                        self.selected_shape = shape.to_string();
+                    }
+                }
+
+                ui.label(format!("Selected Shape: {}", self.selected_shape));
+
+                ui.separator();
                 ui.heading("Input Buffer Preview");
 
                 let pixel_size = 4.0;
