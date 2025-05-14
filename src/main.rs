@@ -1,8 +1,8 @@
-mod jsonifier;
+mod writer;
 
 use eframe::{egui, egui::Vec2, egui::SidePanel};
 use egui::{Color32, Pos2};
-use jsonifier::Jsonifier;
+use writer::Writer;
 
 const BUFFER_SIZE: usize = 64;
 
@@ -27,7 +27,7 @@ struct MyApp {
     is_drawing: bool,
     buffer: [[u8; BUFFER_SIZE]; BUFFER_SIZE],
     selected_shape: String,
-    jsonifier: Jsonifier,
+    writer: Writer,
 }
 
 impl Default for MyApp {
@@ -37,7 +37,7 @@ impl Default for MyApp {
             is_drawing: false,
             buffer: [[0; BUFFER_SIZE]; BUFFER_SIZE],
             selected_shape: "None selected".to_string(),
-            jsonifier: Jsonifier::new(BUFFER_SIZE),
+            writer: Writer::new(BUFFER_SIZE),
         }
     }
 }
@@ -64,7 +64,7 @@ impl eframe::App for MyApp {
                 if response.drag_stopped() {
                     self.is_drawing = false;
                     if self.selected_shape != "None selected" {
-                        self.jsonifier.append(&self.buffer, &self.selected_shape);
+                        self.writer.append(&self.buffer, &self.selected_shape);
                     }
                 }
 
@@ -103,14 +103,6 @@ impl eframe::App for MyApp {
                 }
 
                 ui.label(format!("Selected Shape: {}", self.selected_shape));
-
-                if ui.button("Start JSON File").clicked() {
-                    self.jsonifier.init();
-                }
-
-                if ui.button("Close JSON File").clicked() {
-                    self.jsonifier.close();
-                }
 
                 ui.separator();
                 ui.heading("Input Buffer Preview");
